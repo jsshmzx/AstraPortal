@@ -36,14 +36,10 @@ export default function LoginPage() {
         onSubmit={handleSubmit}
         className="w-full max-w-sm space-y-5 rounded-2xl bg-white p-8 shadow-sm"
       >
-        <h1 className="text-center text-2xl font-semibold text-[#1d1d1f]">
-          登录
-        </h1>
+        <h1 className="text-center text-2xl font-semibold text-[#1d1d1f]">登录</h1>
 
         {error && (
-          <div className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-500">
-            {error}
-          </div>
+          <div className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-500">{error}</div>
         )}
 
         <div className="space-y-4">

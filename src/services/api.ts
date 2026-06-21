@@ -1,7 +1,7 @@
-import type { API } from '@/types';
+import type { API } from "@/types";
 
-const TOKEN_KEY = 'tinder_token';
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1912';
+const TOKEN_KEY = "tinder_token";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1912";
 
 export function getToken(): string | null {
   try {
@@ -30,15 +30,15 @@ export function clearToken(): void {
 export async function sha256Hex(input: string): Promise<string> {
   const encoder = new TextEncoder();
   const data = encoder.encode(input);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 export class AuthError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = 'AuthError';
+    this.name = "AuthError";
   }
 }
 
@@ -47,14 +47,14 @@ export async function apiFetch<T>(
   options?: RequestInit & { skipAuth?: boolean },
 ): Promise<T> {
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
     ...(options?.headers as Record<string, string>),
   };
 
   if (!options?.skipAuth) {
     const token = getToken();
     if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+      headers["Authorization"] = `Bearer ${token}`;
     }
   }
 
@@ -87,7 +87,7 @@ export async function apiFetchWithBody<T>(
 ): Promise<T> {
   return apiFetch<T>(path, {
     ...options,
-    method: 'POST',
+    method: "POST",
     body: JSON.stringify(body),
   });
 }

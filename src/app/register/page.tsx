@@ -136,14 +136,10 @@ export default function RegisterPage() {
           <span className={stepDot(3)}>3</span>
         </div>
 
-        <h1 className="text-center text-2xl font-semibold text-[#1d1d1f]">
-          注册
-        </h1>
+        <h1 className="text-center text-2xl font-semibold text-[#1d1d1f]">注册</h1>
 
         {error && (
-          <div className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-500">
-            {error}
-          </div>
+          <div className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-500">{error}</div>
         )}
 
         {/* Step 1: 个人信息 + 获取问卷 */}
@@ -252,11 +248,7 @@ export default function RegisterPage() {
               className={inputClass}
               autoComplete="email"
             />
-            <button
-              type="submit"
-              disabled={loading}
-              className={btnClass}
-            >
+            <button type="submit" disabled={loading} className={btnClass}>
               {loading ? "完成中..." : "完成注册"}
             </button>
           </form>
@@ -275,7 +267,10 @@ export default function RegisterPage() {
           <p className="text-center text-sm text-gray-500">
             <button
               type="button"
-              onClick={() => { setError(""); setStep(1); }}
+              onClick={() => {
+                setError("");
+                setStep(1);
+              }}
               className="text-[#007AFF] hover:underline"
             >
               重新填写

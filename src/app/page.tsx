@@ -74,18 +74,13 @@ export default function HomePage() {
           <InfoRow label="班级" value={`${user.class}（${classTypeLabel(user.class_type)}）`} />
           <InfoRow label="角色" value={roleLabel(user.user_role)} />
           <InfoRow label="积分" value={`${user.score}`} />
-          <InfoRow
-            label="注册时间"
-            value={new Date(user.joined_at).toLocaleDateString("zh-CN")}
-          />
+          <InfoRow label="注册时间" value={new Date(user.joined_at).toLocaleDateString("zh-CN")} />
           <InfoRow label="状态" value={statusLabel(user.current_status)} />
         </div>
       </div>
 
       {error && (
-        <div className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-500">
-          {error}
-        </div>
+        <div className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-500">{error}</div>
       )}
 
       {/* Logout button */}
@@ -119,8 +114,8 @@ function classTypeLabel(t: string): string {
 
 function roleLabel(r: string): string {
   const map: Record<string, string> = {
-    "superadmin": "超级管理员",
-    "songlist_editor": "歌单编辑者",
+    superadmin: "超级管理员",
+    songlist_editor: "歌单编辑者",
     "normal-user": "普通用户",
   };
   return map[r] || r;

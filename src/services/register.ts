@@ -1,5 +1,5 @@
-import type { API } from '@/types';
-import { apiFetchWithBody } from './api';
+import type { API } from "@/types";
+import { apiFetchWithBody } from "./api";
 
 /**
  * 请求注册问卷（第一步）。
@@ -7,7 +7,7 @@ import { apiFetchWithBody } from './api';
  */
 export async function requestSheet(): Promise<API.SheetResponse> {
   return apiFetchWithBody<API.SheetResponse>(
-    '/api/v1/users/register/sheet/request',
+    "/api/v1/users/register/sheet/request",
     {},
     { skipAuth: true },
   );
@@ -17,14 +17,8 @@ export async function requestSheet(): Promise<API.SheetResponse> {
  * 提交注册信息（第二步）。
  * 包括昵称、姓名、班级信息、安全问答等。
  */
-export async function submitRegistration(
-  data: API.RegisterRequest,
-): Promise<API.RegisterResponse> {
-  return apiFetchWithBody<API.RegisterResponse>(
-    '/api/v1/users/register',
-    data,
-    { skipAuth: true },
-  );
+export async function submitRegistration(data: API.RegisterRequest): Promise<API.RegisterResponse> {
+  return apiFetchWithBody<API.RegisterResponse>("/api/v1/users/register", data, { skipAuth: true });
 }
 
 /**
@@ -35,11 +29,7 @@ export async function completeRegistration(
   data: API.RegisterCompleteRequest,
   tempToken: string,
 ): Promise<API.RegisterCompleteResponse> {
-  return apiFetchWithBody<API.RegisterCompleteResponse>(
-    '/api/v1/users/register/complete',
-    data,
-    {
-      headers: { Authorization: `Bearer ${tempToken}` },
-    },
-  );
+  return apiFetchWithBody<API.RegisterCompleteResponse>("/api/v1/users/register/complete", data, {
+    headers: { Authorization: `Bearer ${tempToken}` },
+  });
 }
