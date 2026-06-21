@@ -40,9 +40,7 @@ jobs:
           version: 11.8.0
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: pnpm
-          cache-dependency-path: AstraPortal/pnpm-lock.yaml
+          node-version: 24
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec tsc --noEmit
 
@@ -59,7 +57,7 @@ jobs:
           version: 11.8.0
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: pnpm
           cache-dependency-path: AstraPortal/pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile
