@@ -1,65 +1,137 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { getMe, logout } from "@/services/auth";
+import { getToken } from "@/services/api";
+import type { API } from "@/types";
+
+export default function HomePage() {
+  const router = useRouter();
+  const [user, setUser] = useState<API.CurrentUser | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const token = getToken();
+    if (!token) {
+      router.replace("/login");
+      return;
+    }
+    getMe()
+      .then(setUser)
+      .catch(() => {
+        router.replace("/login");
+      })
+      .finally(() => setLoading(false));
+  }, [router]);
+
+  async function handleLogout() {
+    setError("");
+    try {
+      await logout("");
+    } catch {
+      // logout 内部已 clearToken
+    }
+    router.replace("/login");
+  }
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p className="text-gray-400">加载中...</p>
+      </div>
+    );
+  }
+
+  if (!user) return null;
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="mx-auto flex min-h-screen max-w-md flex-col p-6">
+      {/* Header */}
+      <div className="pt-8">
+        <h1 className="text-3xl font-semibold text-[#1d1d1f]">Hello World</h1>
+        <p className="mt-1 text-sm text-gray-400">欢迎回来</p>
+      </div>
+
+      {/* User info card */}
+      <div className="mt-8 space-y-4 rounded-2xl bg-white p-6 shadow-sm">
+        <div className="flex items-center gap-4">
+          {/* Avatar placeholder */}
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#007AFF] text-lg font-semibold text-white">
+            {user.nickname.charAt(0)}
+          </div>
+          <div>
+            <p className="text-lg font-medium text-[#1d1d1f]">{user.nickname}</p>
+            <p className="text-sm text-gray-500">@{user.username}</p>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <div className="h-px bg-gray-100" />
+
+        <div className="space-y-3 text-sm">
+          <InfoRow label="真实姓名" value={user.real_name} />
+          <InfoRow label="班级" value={`${user.class}（${classTypeLabel(user.class_type)}）`} />
+          <InfoRow label="角色" value={roleLabel(user.user_role)} />
+          <InfoRow label="积分" value={`${user.score}`} />
+          <InfoRow
+            label="注册时间"
+            value={new Date(user.joined_at).toLocaleDateString("zh-CN")}
+          />
+          <InfoRow label="状态" value={statusLabel(user.current_status)} />
         </div>
-      </main>
+      </div>
+
+      {error && (
+        <div className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-500">
+          {error}
+        </div>
+      )}
+
+      {/* Logout button */}
+      <div className="mt-8">
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="w-full rounded-xl border border-red-200 bg-white py-3 text-center font-medium text-red-500 transition-colors hover:bg-red-50"
+        >
+          退出登录
+        </button>
+      </div>
     </div>
   );
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────
+
+function InfoRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-center justify-between">
+      <span className="text-gray-500">{label}</span>
+      <span className="text-[#1d1d1f]">{value}</span>
+    </div>
+  );
+}
+
+function classTypeLabel(t: string): string {
+  return t === "university" ? "大学" : "高中";
+}
+
+function roleLabel(r: string): string {
+  const map: Record<string, string> = {
+    "superadmin": "超级管理员",
+    "songlist_editor": "歌单编辑者",
+    "normal-user": "普通用户",
+  };
+  return map[r] || r;
+}
+
+function statusLabel(s: string): string {
+  const map: Record<string, string> = {
+    normal: "正常",
+    disabled: "已禁用",
+    banned: "已封禁",
+    pending_deletion: "注销冷却中",
+  };
+  return map[s] || s;
 }
